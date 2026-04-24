@@ -6,9 +6,9 @@ __pycache__/
 env/
 venv/
 ENV/
-*.h5
 *.keras
 *.pt
+!backend/acne_best_model.h5
 
 # Node
 node_modules/
