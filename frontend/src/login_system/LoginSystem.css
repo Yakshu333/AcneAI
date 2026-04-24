@@ -1,0 +1,217 @@
+/* Login System Styles — User-provided design */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+.ls-page {
+    --accent-color: #FF6B35;
+    --base-color: white;
+    --text-color: #2E2B41;
+    --input-color: #F3F0FF;
+
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    font-family: Poppins, 'Segoe UI', sans-serif;
+    font-size: 12pt;
+    color: var(--text-color);
+    text-align: center;
+    min-height: 100vh;
+    background-image: url('./login-bg.jpeg');
+    background-size: cover;
+    background-position: right;
+    overflow: hidden;
+}
+
+.ls-wrapper {
+    box-sizing: border-box;
+    background-color: var(--base-color);
+    height: 100vh;
+    width: max(40%, 600px);
+    padding: 10px;
+    border-radius: 0 20px 20px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.ls-brand {
+    font-size: 3rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent-color);
+    margin: 0 0 0.25rem 0;
+}
+
+.ls-wrapper h1 {
+    font-size: 2rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    margin: 0;
+}
+
+.ls-form {
+    width: min(400px, 100%);
+    margin-top: 20px;
+    margin-bottom: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.ls-form>div {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.ls-form label {
+    flex-shrink: 0;
+    height: 50px;
+    width: 50px;
+    background-color: var(--accent-color);
+    fill: var(--base-color);
+    color: var(--base-color);
+    border-radius: 10px 0 0 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    font-weight: 500;
+    transition: 150ms ease;
+}
+
+.ls-form input {
+    box-sizing: border-box;
+    flex-grow: 1;
+    min-width: 0;
+    height: 50px;
+    padding: 1em;
+    font: inherit;
+    border-radius: 0 10px 10px 0;
+    border: 2px solid var(--input-color);
+    border-left: none;
+    background-color: var(--input-color);
+    transition: 150ms ease;
+}
+
+.ls-form input:hover {
+    border-color: var(--accent-color);
+}
+
+.ls-form input:focus {
+    outline: none;
+    border-color: var(--text-color);
+}
+
+.ls-form div:has(input:focus)>label {
+    background-color: var(--text-color);
+}
+
+.ls-form input::placeholder {
+    color: var(--text-color);
+}
+
+.ls-form>button {
+    margin-top: 10px;
+    border: none;
+    border-radius: 1000px;
+    padding: .85em 4em;
+    background-color: var(--accent-color);
+    color: var(--base-color);
+    font: inherit;
+    font-weight: 600;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: 150ms ease;
+}
+
+.ls-form>button:hover {
+    background-color: var(--text-color);
+}
+
+.ls-form>button:focus {
+    outline: none;
+    background-color: var(--text-color);
+}
+
+.ls-footer-link {
+    font-size: 0.95rem;
+    color: var(--text-color);
+}
+
+.ls-footer-link a {
+    text-decoration: none;
+    color: var(--accent-color);
+    font-weight: 500;
+}
+
+.ls-footer-link a:hover {
+    text-decoration: underline;
+}
+
+/* ─── Error ──────────────────────────────────────────── */
+.ls-error {
+    color: #f06272;
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+}
+
+.ls-form div.incorrect label {
+    background-color: #f06272;
+}
+
+.ls-form div.incorrect input {
+    border-color: #f06272;
+}
+
+/* ─── Password toggle ────────────────────────────────── */
+.ls-toggle-btn {
+    position: absolute;
+    right: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    outline: none;
+    box-shadow: none;
+    cursor: pointer;
+    padding: 0.3rem;
+    line-height: 1;
+    opacity: 0.5;
+    transition: opacity 0.2s ease;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.ls-toggle-btn:hover {
+    opacity: 1;
+}
+
+.ls-toggle-btn:focus,
+.ls-toggle-btn:active {
+    border: none;
+    outline: none;
+    box-shadow: none;
+}
+
+.ls-password-field {
+    position: relative;
+    flex-grow: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+}
+
+.ls-password-field input {
+    padding-right: 2.5rem;
+}
+
+/* ─── Responsive ─────────────────────────────────────── */
+@media (max-width: 1100px) {
+    .ls-wrapper {
+        width: min(600px, 100%);
+        border-radius: 0;
+    }
+}
