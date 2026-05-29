@@ -1,5 +1,6 @@
 import os
 import shutil
+import bcrypt
 from fastapi import FastAPI, File, UploadFile, Form, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -7,7 +8,15 @@ from typing import Optional
 from model.cnn_model import load_model, predict_acne_type
 from db.database import save_prediction_history
 
-app = FastAPI(title="Acne AI API")
+from contextlib import asynccontextmanager
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Load the CNN Model on startup
+    load_model()
+    yield
+
+app = FastAPI(title="Acne AI API", lifespan=lifespan)
 
 # Enable CORS for the React frontend
 app.add_middleware(
@@ -25,14 +34,28 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp'}
 # Ensure upload directory exists
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-# Load the CNN Model on startup
-@app.on_event("startup")
-async def startup_event():
-    load_model()
 
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+# Password Hashing & Verification Utility Functions
+def hash_password(password: str) -> str:
+    password_bytes = password.encode('utf-8')
+    salt = bcrypt.gensalt()
+    hashed = bcrypt.hashpw(password_bytes, salt)
+    return hashed.decode('utf-8')
+
+def verify_password(password: str, hashed: str) -> bool:
+    try:
+        # Check if the stored string starts with typical bcrypt salts
+        if not (hashed.startswith('$2a$') or hashed.startswith('$2b$') or hashed.startswith('$2y$')):
+            return False
+        password_bytes = password.encode('utf-8')
+        hashed_bytes = hashed.encode('utf-8')
+        return bcrypt.checkpw(password_bytes, hashed_bytes)
+    except Exception:
+        return False
 
 # Pydantic Models for Auth
 class LoginRequest(BaseModel):
@@ -62,7 +85,7 @@ async def predict(file: UploadFile = File(...), userId: Optional[str] = Form(Non
     
     try:
         # 1. Run the image through the CNN Model
-        prediction_type, confidence = predict_acne_type(filepath)
+        prediction_type, confidence, detections, dims = predict_acne_type(filepath)
         
         # 2. Check if a User ID was provided to save to MongoDB history
         if userId:
@@ -70,7 +93,9 @@ async def predict(file: UploadFile = File(...), userId: Optional[str] = Form(Non
         
         return {
             "type": prediction_type,
-            "confidence": confidence
+            "confidence": confidence,
+            "detections": detections,
+            "dims": dims
         }
         
     except Exception as e:
@@ -79,19 +104,35 @@ async def predict(file: UploadFile = File(...), userId: Optional[str] = Form(Non
 # Auth Routes
 @app.post("/login")
 async def login(request: LoginRequest):
-    from db.database import get_user_by_email
+    from db.database import get_user_by_email, update_user_password
     user = get_user_by_email(request.email)
     
-    # In production, use hashed passwords (e.g., bcrypt)! 
-    if user and user.get('password') == request.password:
-        return {
-            "message": "Login successful",
-            "user": {
-                "id": str(user['_id']),
-                "name": user.get('name', 'User'),
-                "email": user['email']
+    if user:
+        stored_password = user.get('password', '')
+        
+        # 1. Check if the stored password matches standard bcrypt formats
+        is_bcrypt = stored_password.startswith('$2a$') or stored_password.startswith('$2b$') or stored_password.startswith('$2y$')
+        
+        if is_bcrypt:
+            authenticated = verify_password(request.password, stored_password)
+        else:
+            # Legacy plain-text user login
+            authenticated = (stored_password == request.password)
+            
+            # Migrate to secure bcrypt hash automatically on successful legacy match!
+            if authenticated:
+                secure_hash = hash_password(request.password)
+                update_user_password(request.email, secure_hash)
+                
+        if authenticated:
+            return {
+                "message": "Login successful",
+                "user": {
+                    "id": str(user['_id']),
+                    "name": user.get('name', 'User'),
+                    "email": user['email']
+                }
             }
-        }
         
     raise HTTPException(status_code=401, detail="Invalid email or password")
 
@@ -104,7 +145,7 @@ async def register(request: RegisterRequest):
         
     user_id = create_user({
         "email": request.email,
-        "password": request.password,  # Again, please hash this in a real setup
+        "password": hash_password(request.password),
         "name": request.name
     })
     
@@ -129,4 +170,4 @@ async def history(userId: str):
 
 if __name__ == '__main__':
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=5000)
+    uvicorn.run(app, host="0.0.0.0", port=8000)

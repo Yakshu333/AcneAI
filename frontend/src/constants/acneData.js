@@ -35,6 +35,14 @@ export const OLD_ACNE_DATA = {
             severity: "Moderate"
         },
         {
+            name: "Nodules",
+            emoji: "🟤",
+            description: "Nodules are large, hard, painful lumps that develop deep under the skin's surface. Unlike other acne lesions, they do not contain pus and feel firm to the touch.",
+            appearance: "Hard, painful, solid red or flesh-colored bumps beneath the skin surface.",
+            causes: "Severe clogging and infection deep within the hair follicle walls.",
+            severity: "Severe"
+        },
+        {
             name: "Cysts",
             emoji: "🟣",
             description: "Deep, painful, pus-filled lumps that can cause scars. The most severe form of acne.",
@@ -88,6 +96,16 @@ export const NEW_ACNE_DATA = {
             severity: "Moderate",
             recommendations: "Apply a clean, warm compress for 5-10 minutes to soothe the skin. Change your pillowcase every 2 days.",
             precautions: "NEVER pop or squeeze a pustule as it can push infection deeper. Keep your hands sanitized."
+        },
+        {
+            name: "Nodules",
+            emoji: "🟤",
+            description: "Nodules are a severe, inflammatory type of acne that develop deep beneath the skin. Unlike pustules or cysts, they are solid, painful, and do not contain visible pus.",
+            appearance: "Large, hard, painful red or skin-colored lumps deep beneath the skin's surface with no visible head.",
+            causes: "Deep hair follicle rupture leading to widespread irritation and bacterial infection in deeper skin layers.",
+            severity: "Severe",
+            recommendations: "Seek professional help from a dermatologist. They may recommend oral medications, specialized topicals, or steroid injections.",
+            precautions: "Do not attempt to squeeze, pop, or pick at nodules, as they are solid lesions; pressing them will only damage the skin, worsen pain, and cause deep scarring."
         },
         {
             name: "Cysts",

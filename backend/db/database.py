@@ -27,6 +27,14 @@ def create_user(user_data):
     result = users_collection.insert_one(user_data)
     return str(result.inserted_id)
 
+def update_user_password(email, hashed_password):
+    if db is None: return False
+    result = users_collection.update_one(
+        {"email": email},
+        {"$set": {"password": hashed_password}}
+    )
+    return result.modified_count > 0
+
 def save_prediction_history(user_id, image_filename, prediction_type, confidence):
     if db is None: return None
     history_entry = {

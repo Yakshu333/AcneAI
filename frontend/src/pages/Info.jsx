@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import Navbar from '../components/Navbar';
+import DashboardLayout from '../components/DashboardLayout';
 
 import { NEW_ACNE_DATA as acneData } from '../constants/acneData';
 
@@ -16,9 +16,10 @@ const TreeSVG = ({ selectedType }) => {
         { x: 130, y: 280, name: "Blackheads", parent: 0 },
         { x: 270, y: 280, name: "Whiteheads", parent: 0 },
         // Inflammatory
-        { x: 570, y: 280, name: "Papules", parent: 1 },
-        { x: 700, y: 280, name: "Pustules", parent: 1 },
-        { x: 830, y: 280, name: "Cysts", parent: 1 },
+        { x: 520, y: 280, name: "Papules", parent: 1 },
+        { x: 640, y: 280, name: "Pustules", parent: 1 },
+        { x: 760, y: 280, name: "Nodules", parent: 1 },
+        { x: 880, y: 280, name: "Cysts", parent: 1 },
     ];
 
     return (
@@ -88,11 +89,12 @@ const Info = () => {
     const allTypes = Object.values(acneData).flat();
 
     return (
-        <div className="app-layout">
-            <Navbar />
-            <div className="page-container info-page">
-                <h1>Acne Classification Tree</h1>
-                <p className="page-intro">
+        <DashboardLayout>
+            <div className="page-container info-page" style={{ padding: 0 }}>
+                <h1 style={{ textAlign: 'left', fontSize: '1.75rem', fontWeight: '800', margin: '0 0 0.5rem 0', color: '#1e293b' }}>
+                    Acne Classification Tree
+                </h1>
+                <p className="page-intro" style={{ textAlign: 'left', color: '#64748b', fontSize: '0.95rem', fontWeight: '500', marginBottom: '2rem' }}>
                     Explore the classification of acne types. Click on any type to learn more.
                 </p>
 
@@ -166,14 +168,12 @@ const Info = () => {
                 )}
 
                 {!selectedData && (
-                    <div className="tree-hint">
+                    <div className="tree-hint" style={{ marginTop: '2rem' }}>
                         <p>👆 Click on any acne type above to see details</p>
                     </div>
                 )}
-
-                <Link to="/" className="back-link">Back to Home</Link>
             </div>
-        </div>
+        </DashboardLayout>
     );
 };
 

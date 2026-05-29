@@ -10,4 +10,5 @@ matplotlib
 seaborn
 scikit-learn
 ultralytics
+yolov5
 pydantic

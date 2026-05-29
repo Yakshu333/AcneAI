@@ -1,6 +1,6 @@
 import { NEW_ACNE_DATA } from '../constants/acneData';
 
-const API_URL = 'http://127.0.0.1:5000';
+const API_URL = 'http://127.0.0.1:8000';
 
 /**
  * Maps the predicted class name to the data in NEW_ACNE_DATA
@@ -76,7 +76,9 @@ export const identifyAcne = async (imageFile, userId = null) => {
         return {
             ...acneInfo,
             confidence: (confidence * 100).toFixed(2),
-            severityScore: severityScore.toFixed(1)
+            severityScore: severityScore.toFixed(1),
+            detections: data.detections || [],
+            dims: data.dims || [640, 640]
         };
     } catch (error) {
         console.error('Error during acne identification:', error);

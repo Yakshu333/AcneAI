@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../login_system/AuthContext';
-import Navbar from '../components/Navbar';
+import DashboardLayout from '../components/DashboardLayout';
 import { OLD_ACNE_DATA } from '../constants/acneData';
 import heroBg from '../hero-bg.jpeg';
 
@@ -10,6 +10,7 @@ const acneTypes = [
     { name: "Whiteheads", emoji: "⚪" },
     { name: "Papules", emoji: "🔴" },
     { name: "Pustules", emoji: "🟡" },
+    { name: "Nodules", emoji: "🟤" },
     { name: "Cysts", emoji: "🟣" }
 ];
 
@@ -21,7 +22,7 @@ const Home = () => {
     useEffect(() => {
         const fetchStats = async () => {
             try {
-                const res = await fetch('http://127.0.0.1:5000/stats');
+                const res = await fetch('http://127.0.0.1:8000/stats');
                 const data = await res.json();
                 setStats({
                     accuracy: typeof data.accuracy === 'number' ? data.accuracy.toFixed(2) : data.accuracy,
@@ -43,53 +44,57 @@ const Home = () => {
         : null;
 
     return (
-        <div className="app-layout">
-            <Navbar />
-
+        <DashboardLayout>
             <main className="home-main">
                 {/* Hero Section */}
-                <section className="hero">
-                    <div className="hero-content">
-                        <h1 className="hero-title">
+                <section className="hero" style={{
+                    backgroundImage: `linear-gradient(135deg, rgba(255, 255, 255, 0.96) 25%, rgba(255, 255, 255, 0.8) 55%, rgba(255, 255, 255, 0.25) 100%), url(${heroBg})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'right center',
+                    borderRadius: '24px',
+                    padding: '4rem',
+                    minHeight: '480px',
+                    boxShadow: '0 8px 32px rgba(46, 43, 65, 0.05)',
+                    border: '1px solid #e2e8f0',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    position: 'relative',
+                    overflow: 'hidden'
+                }}>
+                    <div className="hero-content" style={{ position: 'relative', zIndex: 10 }}>
+                        <h1 className="hero-title" style={{ fontSize: '2.5rem', lineHeight: '1.2' }}>
                             AI-Based<br />
                             <span className="hero-highlight">Acne Detection</span> &amp;<br />
                             Classification
                         </h1>
-                        <p className="hero-description">
+                        <p className="hero-description" style={{ fontSize: '1rem', marginTop: '1rem' }}>
                             Detect and Classify Acne Types using Advanced Image Analysis
                         </p>
-                        <div className="hero-buttons">
-                            <Link to="/analyze" className="btn-primary">
+                        <div className="hero-buttons" style={{ marginTop: '2rem' }}>
+                            <Link to="/analyze" className="btn-primary" style={{ padding: '0.8rem 1.8rem', borderRadius: '12px' }}>
                                 <span>📤</span> Start Analysis
                             </Link>
-                            <Link to="/info" className="btn-secondary">
+                            <Link to="/info" className="btn-secondary" style={{ padding: '0.8rem 1.8rem', borderRadius: '12px' }}>
                                 Learn More
                             </Link>
                         </div>
-                        <div className="hero-badges">
+                        <div className="hero-badges" style={{ marginTop: '2.5rem' }}>
                             <span className="badge">⚡ Fast</span>
                             <span className="badge">🎯 {stats.accuracy}% Accuracy</span>
-                            <span className="badge">📊 {stats.totalImages} Images Trained</span>
+                            <span className="badge">📊 {stats.totalImages} Trained</span>
                         </div>
                     </div>
-                    <div className="hero-visual">
-                        <div className="hero-image-container">
-                            <div className="hero-main-bg" style={{
-                                width: '100%',
-                                height: '100%',
-                                minHeight: '400px',
-                                backgroundImage: `linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.1) 100%), url(${heroBg})`,
-                                backgroundSize: 'cover',
-                                backgroundPosition: 'center 20%',
-                                borderRadius: '2px'
-                            }}></div>
+                    <div className="hero-visual" style={{ zIndex: 5 }}>
+                        <div className="hero-image-container" style={{ width: '100%', height: '100%', minHeight: '400px', position: 'relative' }}>
                             {acneTypes.map((type, index) => {
                                 const positions = [
-                                    { top: '4%', right: '22%' },
-                                    { top: '23%', right: '20%' },
-                                    { top: '42%', right: '19.5%' },
-                                    { top: '67%', right: '20.5%' }, // Changed left: '16.5%' to right: '16.5%'
-                                    { top: '78%', right: '28.5%' }
+                                    { top: '7%', right: '18%' },
+                                    { top: '19%', right: '15%' },
+                                    { top: '32%', right: '17%' },
+                                    { top: '44%', right: '19%' },
+                                    { top: '55%', right: '22%' },
+                                    { top: '64%', right: '28%' }
                                 ];
                                 return (
                                     <button
@@ -106,11 +111,9 @@ const Home = () => {
                     </div>
                 </section>
 
-
-
                 {/* Inline Acne Detail Section */}
                 {selectedData && (
-                    <div className="home-detail-wrapper" style={{ padding: '200 3rem' }}>
+                    <div className="home-detail-wrapper" style={{ padding: '3rem 0' }}>
                         <div className="tree-detail-card" style={{ margin: '0 auto 3rem' }}>
                             <div className="detail-header">
                                 <h2>{selectedData.emoji} {selectedData.name}</h2>
@@ -141,19 +144,8 @@ const Home = () => {
                     </div>
                 )}
 
-                {/* CTA Section
-                <section className="cta-section">
-                    <div className="cta-content">
-                        <p className="cta-subtitle">Upload Your Image for</p>
-                        <h2 className="cta-title">Instant Analysis!</h2>
-                        <Link to="/analyze" className="btn-cta">
-                            Analyze Now →
-                        </Link>
-                    </div>
-                </section> */}
-
                 {/* How It Works Section */}
-                <section className="how-it-works">
+                <section className="how-it-works" style={{ padding: '4rem 0' }}>
                     <div className="section-header">
                         <h2 className="section-title">How It Works</h2>
                         <p className="section-subtitle">Get your skin analysis in three simple steps</p>
@@ -193,7 +185,7 @@ const Home = () => {
                 </section>
 
                 {/* About Project Section */}
-                <section className="about-project">
+                <section className="about-project" style={{ padding: '4rem 0' }}>
                     <div className="about-container">
                         <div className="about-content">
                             <h2 className="about-title">About AcneAI</h2>
@@ -233,12 +225,12 @@ const Home = () => {
 
                 {/* Welcome bar */}
                 {user && (
-                    <div className="welcome-bar">
+                    <div className="welcome-bar" style={{ marginTop: '2rem' }}>
                         👋 Thank you for using AcneAI, <strong>{user.name}</strong>
                     </div>
                 )}
             </main>
-        </div>
+        </DashboardLayout>
     );
 };
 
